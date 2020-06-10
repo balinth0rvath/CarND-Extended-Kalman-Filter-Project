@@ -36,8 +36,6 @@ FusionEKF::FusionEKF() {
    * TODO: Finish initializing the FusionEKF.
    * TODO: Set the process and measurement noises
    */
-
-
 }
 
 /**
@@ -87,6 +85,21 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    * TODO: Update the process noise covariance matrix.
    * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
+	float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+
+	previous_timestamp_ = measurement_pack.timestamp_;
+
+	ekf_.F_(0,2) = dt;
+	ekf_.F_(1,3) = dt;
+
+	double noise_ax = 9;
+	double noise_ay = 9;
+
+	ekf_.Q_ = MatrixXd(4,4);
+	ekf_.Q_ << (noise_ax * pow(dt,4))/4, 0,	(noise_ax * pow(dt,3))/2,0,
+							0, (noise_ay * pow(dt,4))/4,0,(noise_ay * pow(dt,3))/2,
+							(noise_ax * pow(dt,3))/2, 0, noise_ax * pow(dt,2), 0,
+							0, (noise_ay * pow(dt,3))/2, 0, noise_ay * pow(dt,2);
 
   ekf_.Predict();
 
@@ -100,12 +113,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    * - Update the state and covariance matrices.
    */
 
-	float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // TODO: Radar updates
 
   } else {
     // TODO: Laser updates
+	
 				
 
   }
