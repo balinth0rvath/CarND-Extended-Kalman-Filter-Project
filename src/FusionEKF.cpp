@@ -36,6 +36,24 @@ FusionEKF::FusionEKF() {
    * TODO: Finish initializing the FusionEKF.
    * TODO: Set the process and measurement noises
    */
+
+	VectorXd x = VectorXd(4);
+	x << 0,0,0,0;
+
+	MatrixXd P = MatrixXd(4,4);
+	P << 	1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1000, 0, 
+				0, 0, 0, 1000;
+	
+	MatrixXd F = MatrixXd(4,4);
+	F <<  1, 0, 1, 0,
+				0, 1, 0, 1,
+				0, 0, 1, 0,
+				0, 0, 0, 1;
+
+	MatrixXd Q = MatrixXd(4,4);
+	ekf_.Init(x,P,F,H_laser_,R_laser_,Q);
 }
 
 /**
@@ -118,9 +136,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   } else {
     // TODO: Laser updates
-	
-				
-
+		VectorXd z(2);
+		z << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1];
+		ekf_.Update(z);
   }
 
   // print the output
