@@ -63,3 +63,24 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
 	return Hj;
 }
+
+
+Eigen::VectorXd Tools::ConvertToPolar(const Eigen::VectorXd& cartesian)
+{
+	VectorXd polar = VectorXd(3);
+
+	double rho, phi, rho_dot;
+	double p_x = cartesian[0];
+	double p_y = cartesian[1];
+	double v_x = cartesian[2];
+	double v_y = cartesian[3];
+
+	rho = sqrt(p_x * p_x+ p_y * p_y);
+	phi = atan2(p_y, p_x);
+
+	rho = (rho < 0.0001) ? 0.0001 : rho;
+	rho_dot = (p_x * v_x + p_y * v_y) / rho;
+	polar << rho, phi, rho_dot;
+				
+	return polar;
+}
